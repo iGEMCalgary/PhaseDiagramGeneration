@@ -53,7 +53,7 @@ def loadData(dataPath):
 	
 	return [phaseDf, uniquePhases, tempConst]
 
-#Get the file names of every picture in a given folder path
+#Get the file names of every csv or specific csv files in a given folder path
 def filesInFolder(folderPath, specificFiles=[]):	
 	fileList=[]
 	for filename in os.listdir(folderPath):
@@ -123,8 +123,12 @@ def splitData(phaseDf, trainTestFrac=0.8):
 
 #Define your custom hyperparameters for the model
 def specifyHyperParameters(temperature):
-	#default gamma and C
-	return (0.1,10000.)
+	#phaseModel = SVC(kernel='rbf', gamma=0.015, C=10000.)	#For T2 - 92.865
+	#phaseModel = SVC(kernel='rbf', gamma=0.1, C=10000.)	#For T1 - 92.340
+	#phaseModel = SVC(kernel='rbf', gamma=0.0035, C=10000.) #For T0 - 94.753%
+	hpDict = {273.15:(0.0035, 10000.), 283.15:(0.1,10000.), 293.15:(0.015,10000.)}
+	
+	return hpDict[temperature]
 
 #Create and train the SVM
 def getModel(trainX, trainY, uniquePhases, hyperParams=(0.1,10000.)):
@@ -401,7 +405,7 @@ for inputFilePath in filesInFolder(inputFolderPath, specificFiles=[]):
 	phaseDf, uniquePhases, tempConst = loadData(inputFilePath)
 
 	#Split the given data into training, validation, and test data
-	trainDataX, trainDataY, testDataX, testDataY = splitData(phaseDf, trainTestFrac=0.80)
+	trainDataX, trainDataY, testDataX, testDataY = splitData(phaseDf, trainTestFrac=0.05)
 	####################################################################################
 
 
@@ -427,7 +431,7 @@ for inputFilePath in filesInFolder(inputFolderPath, specificFiles=[]):
 	####################################################################################
 	print("\n~~~~~~~~~~~~~~~~~~~~~~~~~Fully Interpolating Phase Diagram~~~~~~~~~~~~~~~~~~~~~~~~~")
 	#Specify the total phases of the entire system
-	totalPhases = 10
+	totalPhases = 6
 	outputFilePath = os.path.join(outputFolderPath, inputFilePath[len(inputFolderPath)+1:])
 	createPhaseDiagram(phaseModel, phaseDf, tempConst, totalPhases, outputFilePath)
 	####################################################################################
