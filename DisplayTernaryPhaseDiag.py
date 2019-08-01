@@ -20,7 +20,7 @@ class Display:
         # Assume all data points given are at same temperature!
 
         data_list = pd.read_csv(stringfileName).values.tolist()
-        return (data_list[0][3], list(map(lambda x : [round(x[0], 5), round(x[1], 5), round(x[2], 5), round(x[4], 5)], data_list)))
+        return (data_list[0][3], [p for p in list(map(lambda x : [round(x[0], 5), round(x[1], 5), round(x[2], 5), round(x[4], 5)], data_list)) if p[-1] != 5])
 
 
 
@@ -36,6 +36,8 @@ class Display:
         self.phases = list(phase_set)
         n_unique_phases = len(phase_set)
 
+        print(phase_set)
+
         if n_unique_phases > 6:
             raise Exception("Too many phases")
 
@@ -43,9 +45,9 @@ class Display:
 
         fig = go.Figure(go.Scatterternary({
             'mode': 'markers',
-            'a': list(map(lambda x : x[0], data_in)),
-            'b': list(map(lambda x : x[1], data_in)),
-            'c': list(map(lambda x : x[2], data_in)),
+            'a': list(map(lambda x : x[2], data_in)),
+            'b': list(map(lambda x : x[0], data_in)),
+            'c': list(map(lambda x : x[1], data_in)),
             'text': all_phase_list,
             'marker': {
                 'symbol': 0,
@@ -53,6 +55,17 @@ class Display:
                 'size': 9,
             }
         }))
+
+        fig.update_layout({
+            'title': 'Ternary Scatter Plot',
+            'ternary':
+                {
+                    'sum': 1,
+                    'aaxis': {'title': 'Surfactant'},
+                    'baxis': {'title': 'Water'},
+                    'caxis': {'title': 'Oil'}
+                },
+        })
 
         fig.show()
         return

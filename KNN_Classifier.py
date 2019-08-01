@@ -15,7 +15,10 @@ class KNN_Classifier:
 
     def dist(self, p1, p2):
         # Returns euclidean distance between two points.
-        return (p1[0] - p2[0])**2 + (p1[1] - p2[1])**2 + (p1[2] - p2[2])**2
+        d = (p1[0] - p2[0])**2 + (p1[1] - p2[1])**2 + (p1[2] - p2[2])**2
+        if d == 0:
+            return 0.000001
+        return d
 
 
 
@@ -30,19 +33,16 @@ class KNN_Classifier:
 
         # phase_dist := list of tuples (phase, summed 1 / d of each point)
         phase_dist = [(phase, sum([1 / self.dist(p, p_) for p_ in k_nearest if p_[3] == phase])) for phase in phases]
-        sorted_dist = sorted(phase_dist, key=lambda x:x[1])[::-1]
-
-        return sorted_dist[0][0]
+        return sorted(phase_dist, key=lambda x:x[1])[::-1][0][0]
 
 
 
-    def classify(self, x, y, z, train_data, k, phases):
+    def classify(self, x, y, z, train_data, k):
         """
         Will classify a point based on given training observations
         :param x, y, z: The point to predict its phase
         :param train_data: a list of tuples in form: (x, y, z, PHASE)
         :param k: the number of nearest points to use in the prediction
-        :param phases: tuple containing all phases with arbitrary data type
         :return: the phase in which the KNN algorithm predicts
         """
 
@@ -65,9 +65,9 @@ class KNN_Classifier:
         converged = False
         nearest = []
         last_range = 0
-        while not converged:
+        phases = list(self.getAllPhases(train_data))
 
-            nearest = []
+        while not converged:
             nearest = [p for p in train_data if self.inRange((x, y, z), p, range)]
 
             neighbours_found = len(nearest)
@@ -99,7 +99,7 @@ class KNN_Classifier:
 
 
 
-    def KNN(self, k, train_data, phases, delta):
+    def KNN(self, k, train_data, delta):
         """
         Run the classifier on given data and generate entire ternary diagram
 
@@ -124,6 +124,14 @@ class KNN_Classifier:
                 z_ = (100 - x - y) / 100
 
                 if (x_, y_, z_) not in p_train:
-                    ternary.append((x_, y_, z_, self.classify(x_, y_, z_, train_data, k, phases)))
+                    ternary.append((x_, y_, z_, self.classify(x_, y_, z_, train_data, k)))
 
         return ternary
+
+    def getAllPhases(self, train_data):
+        """
+
+        :param train_data: the list of tuples as given
+        :return: set of all phases within the data
+        """
+        return set([x[-1] for x in train_data])
