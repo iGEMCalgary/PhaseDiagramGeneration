@@ -1,0 +1,211 @@
+Training Log:
+C:\Users\jakel\OneDrive\Documents\GitHub\Phase Diagram Generation\PhaseDiagramGeneration\MLP>Python PD_P2_MLP.py
+Loading phase diagram data...
+Phase diagram data loaded from ['..\\SVM\\Interpolated Data P1\\Results T300_Gen.csv', '..\\SVM\\Interpolated Data P1\\Results T310_Gen.csv', '..\\SVM\\Interpolated Data P1\\Results T315_Gen.csv', '..\\SVM\\Interpolated Data P1\\Results T328_Gen.csv', '..\\SVM\\Interpolated Data P1\\Results T343_Gen.csv']. Time: 124.991 milliseconds.
+The number of training data used is 20604.
+
+Enter in 1 if you wish to load an existing model h5 file, 2 if a new model must be created.
+Enter in a number between 1 and 2:
+2
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #
+=================================================================
+dense (Dense)                (None, 512)               2560
+_________________________________________________________________
+dropout (Dropout)            (None, 512)               0
+_________________________________________________________________
+dense_1 (Dense)              (None, 5)                 2565
+=================================================================
+Total params: 5,125
+Trainable params: 5,125
+Non-trainable params: 0
+_________________________________________________________________
+None
+2019-07-30 23:26:05.263469: I tensorflow/core/platform/cpu_feature_guard.cc:142] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+Epoch 0 completed.
+Epoch 5000 completed.
+^C
+C:\Users\jakel\OneDrive\Documents\GitHub\Phase Diagram Generation\PhaseDiagramGeneration\MLP>Python PD_P2_MLP.py
+Loading phase diagram data...
+Phase diagram data loaded from ['..\\SVM\\Interpolated Data P1\\Results T300_Gen.csv', '..\\SVM\\Interpolated Data P1\\Results T310_Gen.csv', '..\\SVM\\Interpolated Data P1\\Results T315_Gen.csv', '..\\SVM\\Interpolated Data P1\\Results T328_Gen.csv', '..\\SVM\\Interpolated Data P1\\Results T343_Gen.csv']. Time: 44.144 milliseconds.
+The number of training data used is 20604.
+
+Enter in 1 if you wish to load an existing model h5 file, 2 if a new model must be created.
+Enter in a number between 1 and 2:
+2
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #
+=================================================================
+dense (Dense)                (None, 512)               2560
+_________________________________________________________________
+dropout (Dropout)            (None, 512)               0
+_________________________________________________________________
+dense_1 (Dense)              (None, 5)                 2565
+=================================================================
+Total params: 5,125
+Trainable params: 5,125
+Non-trainable params: 0
+_________________________________________________________________
+None
+2019-07-31 00:04:56.781367: I tensorflow/core/platform/cpu_feature_guard.cc:142] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+Epoch 0 completed.
+Epoch 5000 completed.
+Epoch 10000 completed.
+Epoch 15000 completed.
+Epoch 20000 completed.
+Epoch 25000 completed.
+Epoch 30000 completed.
+Epoch 35000 completed.
+Epoch 40000 completed.
+Epoch 45000 completed.
+Epoch 50000 completed.
+Epoch 55000 completed.
+Epoch 60000 completed.
+Epoch 65000 completed.
+Epoch 70000 completed.
+Epoch 75000 completed.
+Epoch 80000 completed.
+Epoch 85000 completed.
+Epoch 90000 completed.
+Epoch 95000 completed.
+
+Model training complete. Time: 706 minutes, 43.602 seconds.
+Saving training history...
+
+End training loss values:
+           loss       acc  val_loss   val_acc  epoch
+99995  0.147477  0.942062  0.091916  0.970881  99995
+99996  0.148907  0.942790  0.091859  0.970638  99996
+99997  0.146871  0.943032  0.091855  0.969910  99997
+99998  0.146981  0.941819  0.091973  0.970153  99998
+99999  0.140649  0.944488  0.091960  0.969910  99999
+5151/5151 [==============================] - 0s 38us/sample - loss: 0.0884 - acc: 0.9703
+Loss (Accuracy of Phase Classification):  0.97029704
+
+~~~~~~~~~~~~~~~~~~~~~~~~~Evaluating Training Data Performance~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The predictions with a confidence of > 80.0%:
+prediction = 1, true value = 2.0, Confidence = 80.200%
+prediction = 3, true value = 2.0, Confidence = 87.155%
+prediction = 3, true value = 0.0, Confidence = 86.128%
+prediction = 0, true value = 2.0, Confidence = 84.050%
+prediction = 3, true value = 2.0, Confidence = 88.440%
+prediction = 1, true value = 0.0, Confidence = 91.418%
+prediction = 1, true value = 0.0, Confidence = 86.308%
+prediction = 3, true value = 2.0, Confidence = 87.483%
+prediction = 0, true value = 1.0, Confidence = 93.208%
+prediction = 3, true value = 2.0, Confidence = 87.705%
+prediction = 0, true value = 1.0, Confidence = 85.325%
+prediction = 1, true value = 0.0, Confidence = 84.709%
+prediction = 3, true value = 0.0, Confidence = 84.985%
+prediction = 3, true value = 2.0, Confidence = 87.241%
+prediction = 3, true value = 2.0, Confidence = 87.045%
+prediction = 3, true value = 2.0, Confidence = 87.027%
+prediction = 3, true value = 2.0, Confidence = 89.721%
+prediction = 3, true value = 2.0, Confidence = 87.041%
+prediction = 1, true value = 0.0, Confidence = 84.804%
+prediction = 3, true value = 2.0, Confidence = 87.121%
+prediction = 3, true value = 2.0, Confidence = 88.170%
+prediction = 1, true value = 0.0, Confidence = 86.914%
+prediction = 0, true value = 1.0, Confidence = 84.601%
+prediction = 3, true value = 2.0, Confidence = 89.802%
+prediction = 3, true value = 2.0, Confidence = 89.015%
+prediction = 1, true value = 0.0, Confidence = 80.465%
+prediction = 3, true value = 2.0, Confidence = 87.093%
+prediction = 0, true value = 2.0, Confidence = 80.572%
+prediction = 2, true value = 1.0, Confidence = 87.505%
+prediction = 3, true value = 2.0, Confidence = 89.294%
+prediction = 3, true value = 0.0, Confidence = 84.118%
+prediction = 0, true value = 1.0, Confidence = 81.156%
+prediction = 0, true value = 2.0, Confidence = 82.192%
+prediction = 0, true value = 1.0, Confidence = 88.580%
+prediction = 3, true value = 2.0, Confidence = 88.726%
+prediction = 0, true value = 2.0, Confidence = 90.104%
+prediction = 1, true value = 2.0, Confidence = 81.285%
+prediction = 0, true value = 1.0, Confidence = 81.040%
+prediction = 1, true value = 2.0, Confidence = 82.451%
+prediction = 1, true value = 0.0, Confidence = 93.080%
+prediction = 3, true value = 2.0, Confidence = 87.113%
+prediction = 1, true value = 0.0, Confidence = 84.522%
+prediction = 3, true value = 2.0, Confidence = 87.149%
+prediction = 3, true value = 2.0, Confidence = 87.043%
+prediction = 1, true value = 0.0, Confidence = 92.998%
+prediction = 1, true value = 0.0, Confidence = 84.806%
+prediction = 3, true value = 2.0, Confidence = 87.518%
+prediction = 0, true value = 2.0, Confidence = 86.410%
+prediction = 1, true value = 0.0, Confidence = 86.634%
+prediction = 0, true value = 1.0, Confidence = 83.156%
+prediction = 0, true value = 4.0, Confidence = 80.270%
+prediction = 3, true value = 2.0, Confidence = 87.084%
+prediction = 3, true value = 2.0, Confidence = 87.147%
+prediction = 0, true value = 2.0, Confidence = 80.687%
+prediction = 2, true value = 0.0, Confidence = 81.916%
+prediction = 3, true value = 2.0, Confidence = 87.027%
+prediction = 0, true value = 1.0, Confidence = 92.189%
+prediction = 0, true value = 2.0, Confidence = 95.891%
+prediction = 3, true value = 2.0, Confidence = 86.745%
+prediction = 0, true value = 2.0, Confidence = 89.689%
+prediction = 1, true value = 2.0, Confidence = 84.147%
+prediction = 1, true value = 2.0, Confidence = 87.802%
+prediction = 2, true value = 1.0, Confidence = 87.979%
+prediction = 3, true value = 0.0, Confidence = 85.639%
+prediction = 3, true value = 2.0, Confidence = 88.731%
+prediction = 0, true value = 2.0, Confidence = 96.907%
+prediction = 1, true value = 2.0, Confidence = 89.165%
+prediction = 2, true value = 0.0, Confidence = 81.527%
+prediction = 1, true value = 0.0, Confidence = 91.196%
+prediction = 3, true value = 2.0, Confidence = 85.314%
+prediction = 0, true value = 1.0, Confidence = 94.289%
+prediction = 0, true value = 1.0, Confidence = 80.993%
+prediction = 3, true value = 2.0, Confidence = 89.538%
+prediction = 3, true value = 2.0, Confidence = 81.602%
+prediction = 3, true value = 2.0, Confidence = 86.925%
+prediction = 1, true value = 0.0, Confidence = 96.201%
+prediction = 2, true value = 0.0, Confidence = 84.152%
+prediction = 3, true value = 2.0, Confidence = 87.364%
+prediction = 2, true value = 0.0, Confidence = 83.776%
+prediction = 3, true value = 2.0, Confidence = 89.725%
+prediction = 3, true value = 2.0, Confidence = 89.410%
+Above is Displaying 81 of 20604 (0.393%) test predictions.
+Accuracy = 97.389%
+b = 0.044286920113503624, m = 0.9762049728308129 for linear regression of predicted values vs true values
+Evaluation complete. Time: 0 minutes, 49.140 seconds.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~Evaluating Testing Data Performance~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The predictions with a confidence of > 80.0%:
+prediction = 1, true value = 0.0, Confidence = 88.563%
+prediction = 0, true value = 1.0, Confidence = 98.917%
+prediction = 0, true value = 1.0, Confidence = 85.570%
+prediction = 0, true value = 1.0, Confidence = 92.162%
+prediction = 2, true value = 0.0, Confidence = 88.147%
+prediction = 0, true value = 2.0, Confidence = 85.661%
+prediction = 3, true value = 2.0, Confidence = 87.923%
+prediction = 3, true value = 2.0, Confidence = 87.065%
+prediction = 3, true value = 2.0, Confidence = 87.144%
+prediction = 0, true value = 2.0, Confidence = 93.910%
+prediction = 0, true value = 2.0, Confidence = 97.403%
+prediction = 2, true value = 1.0, Confidence = 83.534%
+Above is Displaying 12 of 5151 (0.233%) test predictions.
+Accuracy = 97.030%
+b = 0.0430675738627818, m = 0.9719086515247412 for linear regression of predicted values vs true values
+Evaluation complete. Time: 0 minutes, 8.965 seconds.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~Fully Interpolating Phase Diagram~~~~~~~~~~~~~~~~~~~~~~~~~
+Generating phase diagram.
+Phase diagram generated. Time: 0 minutes, 12.981 seconds.
+Saving generated phase diagram.
+Phase diagram for T = 290.15K generated and saved at Extrapolated Data P2\PD_P2_T290.csv. Time: 0 minutes, 13.345 seconds.
+
+Traceback (most recent call last):
+  File "PD_P2_MLP.py", line 688, in <module>
+    createPhaseDiagram(phaseModel, phaseDf, overallPhases, inputTemperatures, outputTemperatures, outputFolderPath)
+  File "PD_P2_MLP.py", line 459, in createPhaseDiagram
+    displayTernaryPD(phaseDf, totalPhases)
+  File "PD_P2_MLP.py", line 535, in displayTernaryPD
+    rawDataContour = [[str(i)+1] for i in range(totalPhases)]
+  File "PD_P2_MLP.py", line 535, in <listcomp>
+    rawDataContour = [[str(i)+1] for i in range(totalPhases)]
+TypeError: can only concatenate str (not "int") to str
