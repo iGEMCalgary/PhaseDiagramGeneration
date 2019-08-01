@@ -21,5 +21,5 @@ print(optimalK)
 print("Min Error: " + str(min(resample.errors)))
 resample.display_ERR_over_K()
 
-display.DisplayTernaryPhaseScatter(data_read[1], data_read[0])
+#display.DisplayTernaryPhaseScatter(data_read[1], data_read[0])
 display.DisplayTernaryPhaseScatter(KNN.KNN(9, data_read[1], 0.01), data_read[0])

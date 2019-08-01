@@ -46,8 +46,8 @@ class Display:
         fig = go.Figure(go.Scatterternary({
             'mode': 'markers',
             'a': list(map(lambda x : x[2], data_in)),
-            'b': list(map(lambda x : x[0], data_in)),
-            'c': list(map(lambda x : x[1], data_in)),
+            'b': list(map(lambda x : x[1], data_in)),
+            'c': list(map(lambda x : x[0], data_in)),
             'text': all_phase_list,
             'marker': {
                 'symbol': 0,
@@ -62,8 +62,8 @@ class Display:
                 {
                     'sum': 1,
                     'aaxis': {'title': 'Surfactant'},
-                    'baxis': {'title': 'Water'},
-                    'caxis': {'title': 'Oil'}
+                    'baxis': {'title': 'Oil'},
+                    'caxis': {'title': 'Water'}
                 },
         })
 
