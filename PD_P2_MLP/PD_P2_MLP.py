@@ -571,7 +571,7 @@ def displayTernaryPDContour(rawDataContour):
 #INITIAL SETTINGS
 ####################################################################################
 #Input and output data file paths
-inputFolderPath = os.path.join('..', 'PD_P1_SVM', 'Interpolated Data P1')
+inputFolderPath = os.path.join('..', 'PD_P1_KNN', 'Interpolated Data P1')
 outputFolderPath = r"Extrapolated Data P2"
 
 #Headers of input data
