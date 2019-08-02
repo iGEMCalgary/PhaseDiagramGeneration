@@ -336,12 +336,13 @@ def displayTernaryPDScatter(rawDataScatter, tempConst):
 		}
 	}))
 	
+	#X-Y-Z is water-oil-surfactant
 	fig.update_layout({
 		'ternary': {
 			'sum': 100,
 			'aaxis': makeAxis('A: Surfactant', 0),
-			'baxis': makeAxis('<br>B: Water', 45),
-			'caxis': makeAxis('<br>C: Oil', -45)
+			'baxis': makeAxis('<br>B: Oil', 45), 
+			'caxis': makeAxis('<br>C: Water', -45)
 		},
 		'annotations': [{
 		  'showarrow': False,

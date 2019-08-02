@@ -87,7 +87,7 @@ def formatData(phaseDf):
 	uniquePhases.sort()
 	
 	#Format the phase data
-	phaseCol = [phasePoint for phasePoint in phaseCol]
+	phaseCol = [phasePoint-1 for phasePoint in phaseCol]
 
 	phaseDf[phaseDfHeaders[len(phaseDfHeaders)-1]] = phaseCol
 	
@@ -124,42 +124,118 @@ def splitData(phaseDf, trainTestFrac=0.8):
 
 	return [trainValDf, trainTarget, testDf, testTarget]
 
-#Define your custom hyperparameters for the model
-def specifyHyperParameters(temperature, default = (0.1,10000.)):
-	"""
-	Temp	Training	Testing
-	300.15:	84.848% 	93.750%
-	310.15: 91.228%		78.571%
-	315.15:	98.246%		71.429%
-	328.15:	91.228%		57.143%
-	343.15:	87.719%		78.571%
-	"""
-	hpDict = {300.15:(0.1, 10000.), 310.15:(3.2, 10000.),
-			  315.15:(5., 10000.), 328.15:(1.9, 10000.),
-			  343.15:(1.0, 10000.)}
-	if temperature in list(hpDict.keys()):
-		return hpDict[temperature]
-	return default
-
 #Create and train the SVM
-def getModel(trainX, trainY, uniquePhases, hyperParams):
+def getModel(trainX, trainY, uniquePhases, tempConst, customSettings={}):
+	#Paths for saving models and traing history
+	
+	
+	#Specify settings of the model training
+	defaultSettings = {'trainingMaxEpochs': 100000,
+					   'trainingPatience' : 50000,
+					   'trainingBatchSize': 32,
+					   'modelSavePath'	  :	r"phaseModel_T{}.h5".format(math.floor(tempConst)),
+					   'trainingSavePath' :	r"trainingHistory.csv"}
+	#Build model
+	phaseModel = buildModel([len(trainX.keys())], len(uniquePhases))
+	print(phaseModel.summary())	
+	
+	useArg = lambda x: customSettings[x] if x in list(customSettings.keys()) else defaultSettings[x]
+	custEpochs = useArg('trainingMaxEpochs')
+	custBatchSize = useArg('trainingBatchSize')
+	custPatience = useArg('trainingPatience')
+	modelSavePath = useArg('modelSavePath')
+	trainingHistoryPath = useArg('trainingSavePath')
+	
+	#Train the model
 	startTime = time.time()
-	print("\nCreating SVM model.")
+	if os.path.isfile(modelSavePath) and os.path.isfile(trainingHistoryPath):
+		phaseModel = keras.models.load_model(modelSavePath)
+		trainingHistoryDf = pd.read_csv(trainingHistoryPath)
+		print("Phase model loaded from: ", modelSavePath)
+	else:
+		trainingHistory = phaseModel.fit(trainX, trainY, epochs=custEpochs, batch_size=custBatchSize, 
+										 shuffle=True, validation_split=0.2, verbose=0, 
+										 callbacks=createModelCallbackFunctions(modelSavePath, custPatience))
+		print("\nModel training complete. " + timeEndTime(startTime))
+
+		#Record training history	
+		trainingHistoryDf = pd.DataFrame(trainingHistory.history)
+		trainingHistoryDf['epoch'] = trainingHistory.epoch
 	
-	#The model is an SVM with an rbf kernel
-	phaseModel = SVC(kernel='rbf', gamma=hyperParams[0], C=hyperParams[1])
+		print("Saving training history...")
+		trainingHistoryDf.to_csv(trainingHistoryPath)
 	
-	phaseModel.fit(trainX, trainY)
-	print("SVM Model created. " + timeEndTime(time.time()))
+	plotHistory(trainingHistoryDf, 'Phase Classification')
 	
 	return phaseModel
+
+#Build the model
+def buildModel(inputShape, outputDimension):
+	#Create the model; a keras sequential model
+	model = keras.Sequential()
+		
+	#Standard feedforward MLP
+	model.add(layers.Dense(512, activation='softmax', input_shape=inputShape))
+	model.add(layers.Dropout(0.05))
+
+	#Output layer is a dense layer.
+	model.add(layers.Dense(outputDimension, activation='softmax'))
+	
+	#Compile the model 
+	optimizer = keras.optimizers.Adam()
+	model.compile(loss='sparse_categorical_crossentropy',
+				  optimizer = optimizer,
+				  metrics=['accuracy'])
+	return model
 
 #Evaluate the performance of the model on the test data
 def evaluateModel(model, xDataTest, yDataTest):
 	#Evaluate the final results
-	yPred = model.predict(xDataTest)
-	acc = metrics.accuracy_score(yDataTest, yPred)
+	loss, acc = model.evaluate(x=xDataTest,
+							   y=yDataTest)	
 	print("Loss (Accuracy of Phase Classification): ", acc)
+
+#Create the callback functions of the model
+def createModelCallbackFunctions(modelSavePath, earlyStopPatienceP):
+	#Callback for early stopping
+	earlyStopPatience = earlyStopPatienceP
+	callbackEarlyStop = keras.callbacks.EarlyStopping(monitor = 'val_loss', patience = earlyStopPatience)
+	
+	#Callback for checkpointing/model saving.
+	callbackCheckpoint = keras.callbacks.ModelCheckpoint(filepath=modelSavePath, monitor = 'val_loss', save_best_only=True)
+	
+	#training message callback
+	trainMessage = PrintDot()
+	
+	#Compile callback list
+	callbackList = [callbackEarlyStop, callbackCheckpoint, trainMessage]
+	
+	return callbackList
+
+#Train the model and plot the history
+#Display training progress by printing a single dot for each completed epoch 
+#Called on every batch
+class PrintDot(keras.callbacks.Callback):
+	def on_epoch_end(self, epoch, logs):
+		if epoch % 5000 == 0: print("Epoch {} completed.".format(epoch))
+
+#Plot the Error vs Training Epoch for the model
+def plotHistory(histDf, targetHeader):	
+	#Create the graph for the trainging and value MAE
+	plt.figure(dpi = 120)
+	plt.xlabel('Epoch')
+	plt.ylabel('Sparse Categorical Crossentropy Error [{}]'.format(targetHeader))
+	plt.plot(histDf['epoch'], histDf['loss'], label = 'Train Sparse Categorical Crossentropy', linewidth = 1, )
+	plt.plot(histDf['epoch'], histDf['val_loss'], label = 'Val Sparse Categorical Crossentropy', linewidth = 1)
+	plt.ylim(0, max(max(histDf['loss'][math.floor(len(histDf['loss'])*0.1):]), 
+				max(histDf['val_loss'][math.floor(len(histDf['loss'])*0.1):]), 
+				max(max(histDf['loss']), max(histDf['val_loss']))*0.01))
+	
+	plt.legend()
+	
+	#Show the graphs
+	plt.show()
+	plt.close()
 
 #Predict and evaluate the performance of the model on the given labeled data
 def evaluatePredictions(model, xData, yData, plot=True):
@@ -235,7 +311,10 @@ def plotErrDistr(yData, yPredictions, ):
 
 #Determine the classification and confidence level of a prediction
 def getPrediction(modelOutput):
-	return [modelOutput, 1.0]
+	prediction = np.argmax(modelOutput)
+	confidence = modelOutput[prediction]
+	
+	return [prediction, confidence]
 	
 #Plot a subplot for the the model's classification outputs for a given prediction list
 def plotNNOutput(labeledPredList):
@@ -312,7 +391,7 @@ def displayTernaryPD(phaseDf, overallPhases, tempConst):
 		rawDataScatter.append({'Species 1':	c,
 							   'Species 2':	b,
 							   'Species 3':	a,
-							   'Phase':		p})
+							   'Phase':		p+1})
 		rawDataContour[int(phaseDf.iloc[i,3])-1].append([phaseDf.iloc[i,0], phaseDf.iloc[i,2], phaseDf.iloc[i,1]])
 		
 	#Display scatter plot
@@ -425,18 +504,18 @@ for inputFilePath in filesInFolder(inputFolderPath, specificFiles=[]):
 	#CREATE AND EVALUATE THE SVM
 	####################################################################################
 	#Create the model
-	phaseModel = getModel(trainDataX, trainDataY, uniquePhases, specifyHyperParameters(tempConst))
+	phaseModel = getModel(trainDataX, trainDataY, uniquePhases, tempConst)
 
 	#Calculate the test error of the model
 	evaluateModel(phaseModel, testDataX, testDataY)
 
 	#Make predictions for the training data
 	print("\n~~~~~~~~~~~~~~~~~~~~~~~~~Evaluating Training Data Performance~~~~~~~~~~~~~~~~~~~~~~~~~")
-	evaluatePredictions(phaseModel, trainDataX, trainDataY, plot=False)
+	evaluatePredictions(phaseModel, trainDataX, trainDataY, plot=True)
 
 	#Make predictions for the testing data
 	print("\n~~~~~~~~~~~~~~~~~~~~~~~~~Evaluating Testing Data Performance~~~~~~~~~~~~~~~~~~~~~~~~~")
-	evaluatePredictions(phaseModel, testDataX, testDataY, plot=False)
+	evaluatePredictions(phaseModel, testDataX, testDataY, plot=True)
 	####################################################################################
 
 

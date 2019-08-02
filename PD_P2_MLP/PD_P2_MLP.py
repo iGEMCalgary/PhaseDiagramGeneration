@@ -425,7 +425,6 @@ def createPhaseDiagram(phaseModel, phaseDfParam, totalPhases, inputTemperatures,
 		print("Phase diagram for T = {}K generated and saved at {}. ".format(realTemp, phaseDiagramSavePath) + timeEndTime(startTime) + '\n')	
 				
 		#Display the generated phase diagram
-		phaseDf.pop(list(phaseDf.columns)[-2:-1][0])
 		displayTernaryPD(phaseDf, totalPhases, realTemp)
 	
 #Generate a phase diagram dataframe 
@@ -455,6 +454,8 @@ def generatePDDF(phaseModel, phaseDfParam, tempConst, denseInterval = 0.01):
 	#Put the final output csv together
 	for i in range(len(headers)):
 		phaseDf[headers[i]] = generatedTable[i]
+	
+	phaseDf.pop(list(phaseDf.columns)[-2:-1][0])
 	
 	print("Phase diagram generated. " + timeEndTime(startTime))
 	return phaseDf
@@ -501,9 +502,9 @@ def displayTernaryPDScatter(rawDataScatter, tempConst):
 	fig.update_layout({
 		'ternary': {
 			'sum': 100,
-			'aaxis': makeAxis('Species A (3): Surfactant', 0),
-			'baxis': makeAxis('<br>Species B (2): Water', 45),
-			'caxis': makeAxis('<br>Species C (1): Oil', -45)
+			'aaxis': makeAxis('Species A: Surfactant', 0),
+			'baxis': makeAxis('<br>Species B: Oil', 45),
+			'caxis': makeAxis('<br>Species C: Water', -45)
 		},
 		'annotations': [{
 		  'showarrow': False,
@@ -570,7 +571,7 @@ def displayTernaryPDContour(rawDataContour):
 #INITIAL SETTINGS
 ####################################################################################
 #Input and output data file paths
-inputFolderPath = os.path.join('..', 'SVM', 'Interpolated Data P1')
+inputFolderPath = os.path.join('..', 'PD_P1_SVM', 'Interpolated Data P1')
 outputFolderPath = r"Extrapolated Data P2"
 
 #Headers of input data
