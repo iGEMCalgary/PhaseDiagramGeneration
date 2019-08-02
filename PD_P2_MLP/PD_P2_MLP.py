@@ -571,7 +571,7 @@ def displayTernaryPDContour(rawDataContour):
 #INITIAL SETTINGS
 ####################################################################################
 #Input and output data file paths
-inputFolderPath = os.path.join('..', 'PD_P1_KNN', 'Interpolated Data P1')
+inputFolderPath = os.path.join('..', 'PD_P1_KNN', 'Experimental Interpolated Results')
 outputFolderPath = r"Extrapolated Data P2"
 
 #Headers of input data
@@ -582,7 +582,7 @@ overallPhases = 4
 #Desired temperatures for output files
 outputTemperatures = [[290.15 + 5*i] for i in range(12)] 
 
-custSettings = {'trainingMaxEpochs': 60000,
+custSettings = {'trainingMaxEpochs': 70000,
 				'trainingPatience' : 5000,
 				'trainingBatchSize': 1024}
 ####################################################################################
