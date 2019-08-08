@@ -1,4 +1,4 @@
-from KNN_Classifier import KNN_Classifier
+from KNN.KNN_Classifier import KNN_Classifier
 import random
 import plotly.graph_objects as go
 # Note the resampling is done solely on the K means classifier to obtain optimal value for k

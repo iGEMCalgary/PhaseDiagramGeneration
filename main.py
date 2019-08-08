@@ -1,25 +1,25 @@
-from KNN_Classifier import KNN_Classifier
-from Resampling import Resampling
+from KNN.KNN_Classifier import KNN_Classifier
 from DisplayTernaryPhaseDiag import Display
+from SVM.Resampling_SVM import ResampleSVM
+from KNN.Resampling_KNN import Resampling
 
-ALL_DATA_PATH = 'RESULTS1_temp5.csv'
+ALL_DATA_PATH = 'RESULTS1_temp2.csv'
 
 display = Display()
 KNN = KNN_Classifier()
 
 
-# RUN FUNCTIONS
+
+
+#display.Display3DScatter()
+
+
 data_read = display.FormatDataFromCSV(ALL_DATA_PATH)
-print(data_read)
-
-data_copy = data_read[1].copy()
-
-resample = Resampling(data_read[1], 10, data_read[0])
-
-optimalK = resample.find_optimal_k( max_k=20 )
-print(optimalK)
-print("Min Error: " + str(min(resample.errors)))
-resample.display_ERR_over_K()
+svmResample = ResampleSVM(data_read[1])
+knnResample = Resampling(data_read[1], 10, 5)
+display.DisplayTernaryPhaseScatter(data_read[1], data_read[0])
+#display.DisplayTernaryPhaseScatter(KNN.KNN(6, data_read[1], 0.005), data_read[0])
+display.Display3DScatter()
 
 #display.DisplayTernaryPhaseScatter(data_read[1], data_read[0])
-display.DisplayTernaryPhaseScatter(KNN.KNN(9, data_read[1], 0.01), data_read[0])
+

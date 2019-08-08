@@ -1,5 +1,5 @@
-from KNN_Classifier import KNN_Classifier
-from Resampling import Resampling
+from KNN.KNN_Classifier import KNN_Classifier
+from KNN.Resampling_KNN import Resampling
 from DisplayTernaryPhaseDiag import Display
 import numpy as np
 import pandas as pd

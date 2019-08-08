@@ -117,11 +117,11 @@ class KNN_Classifier:
         # Points in train WITHOUT phase label
         p_train = [(i[0], i[1], i[2]) for i in train_data]
 
-        for x in range(0, 100, int(delta*100)):
-            for y in range(0, 100 - x, int(delta*100)):
-                x_ = x /100
-                y_ = y /100
-                z_ = (100 - x - y) / 100
+        for x in range(0, 1000, int(delta*1000)):
+            for y in range(0, 1000 - x, int(delta*1000)):
+                x_ = x /1000
+                y_ = y /1000
+                z_ = (1000 - x - y) / 1000
 
                 if (x_, y_, z_) not in p_train:
                     ternary.append((x_, y_, z_, self.classify(x_, y_, z_, train_data, k)))

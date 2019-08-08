@@ -1,4 +1,4 @@
-from KNN_Classifier import KNN_Classifier
+from KNN.KNN_Classifier import KNN_Classifier
 import random
 import plotly.graph_objects as go
 # Note the resampling is done solely on the K means classifier to obtain optimal value for k
@@ -115,8 +115,8 @@ class Resampling:
         # self.errors holds the average error rate of each of its partitions of specified k
         # The index of each value in self.errors is k-1
         fig = go.Figure(data=go.Scatter(x=[k for k in range(1, len(self.errors) + 1)], y= self.errors))
-        fig.update_xaxes(title_text='K value')
-        fig.update_yaxes(title_text='Mean error rate')
+        fig.update_xaxes(title_text='K Value')
+        fig.update_yaxes(title_text='Mean Error')
         fig.show()
         return
 

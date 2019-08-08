@@ -1,11 +1,12 @@
 from itertools import permutations
-from plotly import graph_objects as go
+from plotly import graph_objs as go
 import pandas as pd
-import random
+import chart_studio.plotly as py
+import plotly
 
 class Display:
     # Each color for different phases. Uses the colors in increasing order
-    colors = ['#65c6bb', '#87d37c', '#9b59b6', '#d64541', '#ffffcc', '#2c3e50']
+    colors = ['#46576C', '#EFF0F1', '#C2EABD', '#60B4C1', '#ffffcc', '#2c3e50']
     phases = ()
 
     def FormatDataFromCSV(self, stringfileName):
@@ -52,7 +53,7 @@ class Display:
             'marker': {
                 'symbol': 0,
                 'color': [phaseToColDict[phase] for phase in all_phase_list],
-                'size': 9,
+                'size': 14,
             }
         }))
 
@@ -62,15 +63,56 @@ class Display:
                 {
                     'sum': 1,
                     'aaxis': {'title': 'Surfactant'},
-                    'baxis': {'title': 'Oil'},
-                    'caxis': {'title': 'Water'}
-                },
+                'baxis': {'title': 'Oil'},
+                'caxis': {'title': 'Water'}
+            },
         })
+        plotly.offline.plot(fig, filename='name.html')
 
-        fig.show()
+
         return
 
 
-    def Display3DScatter(self, data_in):
-        # Display the data in
+    def Display3DScatter(self):
+        phase_set = {1, 2, 3, 4}
+        self.phases = list(phase_set)
+        n_unique_phases = len(phase_set)
+
+        if n_unique_phases > 6:
+            raise Exception("Too many phases")
+
+        phaseToColDict = {list(phase_set)[i] : self.colors[i] for i in range(n_unique_phases)}
+        x = []
+        y = []
+        z = []
+        colors_ = []
+
+        root3_2 = (3**(1/2)/2)
+
+        for t in range(290, 350, 5):
+            data_list = pd.read_csv('Visualization/Generated Results/PD_P2_T' + str(t) + '.csv').values.tolist()
+            for p in data_list:
+                x.append(p[0]*0.5 + p[2])
+                y.append(p[0] * root3_2)
+                z.append(t)
+                colors_.append(phaseToColDict[p[-1]])
+
+        fig2 = go.Figure(data=[go.Scatter3d(
+            x=x,
+            y=y,
+            z=z,
+            mode='markers',
+            marker=dict(
+                size=3,
+                color=colors_,
+                opacity=0.6
+            )
+        )])
+
+        fig2.show()
+
+        return
+
+
+    def reduce_to_2D(self):
         return
