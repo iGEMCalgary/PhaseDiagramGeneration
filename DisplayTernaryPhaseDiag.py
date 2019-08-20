@@ -26,7 +26,7 @@ class Display:
         # Assume all data points given are at same temperature!
 
         data_list = pd.read_csv(stringfileName).values.tolist()
-        return (data_list[0][3], [p for p in list(map(lambda x : [round(x[0], 5), round(x[1], 5), round(x[2], 5), round(x[4], 5)], data_list)) if p[-1] != 5])
+        return (data_list[0][3], [p for p in list(map(lambda x : [x[0], x[1], x[2], x[4]], data_list))])
 
 
 
@@ -134,9 +134,9 @@ class Display:
         deltaTime = time.time() - totalStartTime
         print("Data Loaded. Time: {:5.3f} minutes.".format(deltaTime/60.0))
 		
-		rotationStage = 0		#The stage of the rotation
-		frameStage = 0			#The index of the first frame you need to generate
-		rotationTicks=100		#Number of ticks in one rotation 
+        rotationStage = 0		#The stage of the rotation
+        frameStage = 0			#The index of the first frame you need to generate
+        rotationTicks=100		#Number of ticks in one rotation
 								#(if you want the full rotation you need rotationTicks + 1)
 								#Like this is a pic at 0 degrees and 360 degrees
 							
