@@ -421,9 +421,9 @@ def displayTernaryPDScatter(rawDataScatter, tempConst):
 	fig.update_layout({
 		'ternary': {
 			'sum': 100,
-			'aaxis': makeAxis('A: Surfactant', 0),
-			'baxis': makeAxis('<br>B: Water', 45),
-			'caxis': makeAxis('<br>C: Oil', -45)
+			'aaxis': makeAxis('A: Water', 0),
+			'baxis': makeAxis('<br>B: Oil', 45),
+			'caxis': makeAxis('<br>C: Surfactant', -45)
 		},
 		'annotations': [{
 		  'showarrow': False,
@@ -494,7 +494,7 @@ for inputFilePath in filesInFolder(inputFolderPath, specificFiles=[]):
 	#DATA PREPROCESSING
 	####################################################################################
 	#Load and reformat the input data
-	phaseDf, uniquePhases, tempConst = loadData(inputFilePath, undesirablePhases=[5])
+	phaseDf, uniquePhases, tempConst = loadData(inputFilePath, undesirablePhases=[])
 
 	#Split the given data into training, validation, and test data
 	trainDataX, trainDataY, testDataX, testDataY = splitData(phaseDf, trainTestFrac=0.80)
