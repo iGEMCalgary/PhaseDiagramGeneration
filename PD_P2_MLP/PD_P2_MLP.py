@@ -425,7 +425,7 @@ def createPhaseDiagram(phaseModel, phaseDfParam, totalPhases, inputTemperatures,
 		print("Phase diagram for T = {}K generated and saved at {}. ".format(realTemp, phaseDiagramSavePath) + timeEndTime(startTime) + '\n')	
 				
 		#Display the generated phase diagram
-		displayTernaryPD(phaseDf, totalPhases, realTemp)
+		#displayTernaryPD(phaseDf, totalPhases, realTemp)
 	
 #Generate a phase diagram dataframe 
 def generatePDDF(phaseModel, phaseDfParam, tempConst, denseInterval = 0.01):
@@ -455,6 +455,7 @@ def generatePDDF(phaseModel, phaseDfParam, tempConst, denseInterval = 0.01):
 	for i in range(len(headers)):
 		phaseDf[headers[i]] = generatedTable[i]
 	
+	#Remove temperature column
 	phaseDf.pop(list(phaseDf.columns)[-2:-1][0])
 	
 	print("Phase diagram generated. " + timeEndTime(startTime))
@@ -580,7 +581,7 @@ headers = ['X', 'Y', 'Z', 'Temp', 'Phase']
 overallPhases = 4
 
 #Desired temperatures for output files
-outputTemperatures = [[290.15 + 5*i] for i in range(12)] 
+outputTemperatures = [[295.15 + 1*i] for i in range(50)] 
 
 custSettings = {'trainingMaxEpochs': 70000,
 				'trainingPatience' : 5000,

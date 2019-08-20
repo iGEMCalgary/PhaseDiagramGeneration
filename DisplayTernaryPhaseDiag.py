@@ -2,7 +2,12 @@ from itertools import permutations
 from plotly import graph_objs as go
 import pandas as pd
 import chart_studio.plotly as py
+import plotly.io as pio
 import plotly
+import math
+import os
+import time
+
 
 class Display:
     # Each color for different phases. Uses the colors in increasing order
@@ -74,11 +79,12 @@ class Display:
 
 
     def Display3DScatter(self):
+        totalStartTime=time.time()
         phase_set = {1, 2, 3, 4}
         self.phases = list(phase_set)
         n_unique_phases = len(phase_set)
 
-        if n_unique_phases > 6:
+        if n_unique_phases > 99:
             raise Exception("Too many phases")
 
         phaseToColDict = {list(phase_set)[i] : self.colors[i] for i in range(n_unique_phases)}
@@ -89,28 +95,89 @@ class Display:
 
         root3_2 = (3**(1/2)/2)
 
-        for t in range(290, 350, 5):
-            data_list = pd.read_csv('Visualization/Generated Results/PD_P2_T' + str(t) + '.csv').values.tolist()
+        for t in range(295, 346, 2):
+            data_list = pd.read_csv('PD_P2_MLP/Extrapolated Data P2/PD_P2_T' + str(t) + '.csv').values.tolist()
             for p in data_list:
                 x.append(p[0]*0.5 + p[2])
                 y.append(p[0] * root3_2)
                 z.append(t)
                 colors_.append(phaseToColDict[p[-1]])
 
+        #GETTING RID OF UNWANTED PHASES
+        unwantedPhases = [self.colors[i] for i in []]
+
+        unwantedPhaseIndices = [index for index, value in enumerate(colors_) if value in unwantedPhases]
+        unwantedPhaseIndices.reverse()
+        for i in unwantedPhaseIndices:
+            del x[i]
+            del y[i]
+            del z[i]
+            del colors_[i]
+		
+        #save images for a camera view
+        camR = math.sqrt(5-0.375**2)
+        camX = camR
+        camY = 0
+		
         fig2 = go.Figure(data=[go.Scatter3d(
-            x=x,
-            y=y,
-            z=z,
-            mode='markers',
-            marker=dict(
-                size=3,
-                color=colors_,
-                opacity=0.6
-            )
-        )])
+			        x=x,
+			        y=z,
+                    z=y,
+	                mode='markers',
+                    marker=dict(
+                    size=3,
+                    color=colors_,
+                    opacity=0.4
+                    )
+                )])
+		
+        deltaTime = time.time() - totalStartTime
+        print("Data Loaded. Time: {:5.3f} minutes.".format(deltaTime/60.0))
+		
+		rotationStage = 0		#The stage of the rotation
+		frameStage = 0			#The index of the first frame you need to generate
+		rotationTicks=100		#Number of ticks in one rotation 
+								#(if you want the full rotation you need rotationTicks + 1)
+								#Like this is a pic at 0 degrees and 360 degrees
+							
+        for i in range(rotationTicks):
+            if i > rotationStage:
+                startTime=time.time()
 
-        fig2.show()
+                camera = dict(up=dict(x=0, y=0, z=1),
+		    				  center=dict(x=0, y=0, z=0),
+		    				  eye=dict(x=camX, y=camY, z=0.375))
 
+                fig2['layout'].update(scene=dict(
+                    camera=camera,
+             	    xaxis=dict(showbackground=False, showticklabels=False, nticks=6, range=[0,1]),
+		    		yaxis=dict(showbackground=False, showticklabels=False, nticks=6, range=[290,345]),
+		            zaxis=dict(showbackground=False, showticklabels=False, range=[0,root3_2])),
+		    		autosize=False,
+		    		width=1280,
+		    		height=1280)
+				
+                #fig2.show()
+				
+                fig2.write_image(os.path.join("Visualization","gifConstruction","ternaryPlot_{}.png".format(i+frameStage)))
+                #fig2.close()
+                #fig2.show()
+                deltaTime = time.time() - startTime
+                print("Frame {} generated. Time: {:5.3f} minutes.".format(i+frameStage, deltaTime/60.0))
+			
+            #Update camera angle
+            camR = math.sqrt(5-0.375**2)
+            camX = camR
+            camY = 0
+
+            for i in range(100):
+                if i < (rotationTicks/2):
+                    camX = camR-(i%(rotationTicks/2))*(2*camR)/(rotationTicks/2)
+                    camY = math.sqrt(max([0,5-0.375**2-camX**2]))
+                else:
+                    camX = -camR+(i%(rotationTicks/2))*(2*camR)/(rotationTicks/2)
+                    camY = -math.sqrt(max([0,5-0.375**2-camX**2]))    
+                print("i = {}, X = {}, Y = {}".format(i, camX, camY))
         return
 
 
