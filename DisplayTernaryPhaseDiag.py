@@ -1,8 +1,6 @@
-from itertools import permutations
+
 from plotly import graph_objs as go
 import pandas as pd
-import chart_studio.plotly as py
-import plotly.io as pio
 import plotly
 import math
 import os
@@ -11,8 +9,8 @@ import time
 
 class Display:
     # Each color for different phases. Uses the colors in increasing order
-    colors = ['#46576C', '#EFF0F1', '#C2EABD', '#60B4C1', '#ffffcc', '#2c3e50']
-    phases = ()
+    colors = ['#46576C', '#ebebeb', '#C2EABD', '#60B4C1', '#ffffcc']
+    phases = []
 
     def FormatDataFromCSV(self, stringfileName):
         """
@@ -30,11 +28,12 @@ class Display:
 
 
 
-    def DisplayTernaryPhaseScatter(self, data_in, temp):
+    def DisplayTernaryPhaseScatter(self, data_in, size, title):
         """
         Will display a ternary phase diagram as a scatter plot at a given temperature
         :param data_in: a list of tuples. Each tuple in form: (x, y, z, PHASE)
         :param temp: float kalvin temperature of the phase slice
+        :param size: The size of the displayed points
         :return: nothing
         """
         all_phase_list = list(map(lambda x : x[3], data_in))
@@ -42,12 +41,10 @@ class Display:
         self.phases = list(phase_set)
         n_unique_phases = len(phase_set)
 
-        print(phase_set)
-
         if n_unique_phases > 6:
             raise Exception("Too many phases")
-
-        phaseToColDict = {list(phase_set)[i] : self.colors[i] for i in range(n_unique_phases)}
+        print(self.phases)
+        phaseToColDict = {self.phases[i] : self.colors[i] for i in range(n_unique_phases)}
 
         fig = go.Figure(go.Scatterternary({
             'mode': 'markers',
@@ -58,12 +55,12 @@ class Display:
             'marker': {
                 'symbol': 0,
                 'color': [phaseToColDict[phase] for phase in all_phase_list],
-                'size': 14,
+                'size': size,
             }
         }))
 
         fig.update_layout({
-            'title': 'Ternary Scatter Plot',
+            'title': title,
             'ternary':
                 {
                     'sum': 1,
@@ -72,7 +69,7 @@ class Display:
                 'caxis': {'title': 'Water'}
             },
         })
-        plotly.offline.plot(fig, filename='name.html')
+        plotly.offline.plot(fig, filename=title+".html")
 
 
         return

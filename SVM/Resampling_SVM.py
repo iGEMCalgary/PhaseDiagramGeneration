@@ -1,10 +1,9 @@
 from sklearn import svm
 import random
-from plotly import graph_objects as go
 
 class ResampleSVM:
 
-    def __init__(self, data_in, gamma_range=(0.02, 2, 0.1), C_range=(200, 25000, 2000), k_fold=10):
+    def __init__(self, data_in, gamma_range=(0.02, 1.5, 0.01), C_range=(200, 25000, 200), k_fold=10):
         # gamma and C are parameters to optimize for the SVM
         self.gamma_range = gamma_range
         self.C_range = C_range
@@ -100,7 +99,7 @@ class ResampleSVM:
                     train.append(self.data_in[i])
             err_total += self.classify_set(train, test, g, C)
 
-        return err_total / self.k_fold
+        return g, C, err_total / self.k_fold
 
 
     def display_error_over_GandC(self):
@@ -129,7 +128,8 @@ class ResampleSVM:
 
         min_err = min(z)
         self.min_C = y[z.index(min_err)]
-        self.min_G = x[z.index(min_err)]
+        self.min_g = x[z.index(min_err)]
+
         """
         fig = go.Figure(data=[go.Mesh3d(z=z, x=x, y=y, colorbar_title='Mean Error Rate',
         colorscale=[[0, 'gold'],
@@ -141,12 +141,7 @@ class ResampleSVM:
             yaxis_title='COST',
             zaxis_title='MEAN ERROR RATE'))
 
-        fig2 = go.Figure(data=[go.Scatter3d(x=x, y=y, z=z,
-                                           mode='markers')])
-                                           
-
         fig.show()
-        fig2.show()
         """
         return
 
