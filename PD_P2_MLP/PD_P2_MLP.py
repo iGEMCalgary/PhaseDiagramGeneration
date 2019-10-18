@@ -409,6 +409,10 @@ def createPhaseDiagram(phaseModel, phaseDfParam, totalPhases, inputTemperatures,
 	tempSamplesCopy = tempSamples.copy()
 	tempSamples = scaler.transform(tempSamples)
 	
+	#Numpy array for the area of each phase vs temp
+	phaseVsTemp = np.empty((0,totalPhases+1))
+	
+	#Generate phase diagram for each temperature
 	for tempConst in tempSamples:
 		startTime = time.time() 
 		
@@ -418,14 +422,28 @@ def createPhaseDiagram(phaseModel, phaseDfParam, totalPhases, inputTemperatures,
 		#Get the real temperature
 		realTemp = scaler.inverse_transform([tempConst])[0][0]
 
+		#Compile the phase area data for that temperature
+		phaseVsTemp = addPhaseAreaRow(phaseVsTemp, phaseDf, totalPhases, realTemp)
+
 		#Save the final output dataframe to a csv file.
 		print("Saving generated phase diagram.")
 		phaseDiagramSavePath = os.path.join(outputFolderPath, "PD_P2_T{}.csv".format(math.floor(realTemp)))
 		phaseDf.to_csv(phaseDiagramSavePath, index=False, header=False)
 		print("Phase diagram for T = {}K generated and saved at {}. ".format(realTemp, phaseDiagramSavePath) + timeEndTime(startTime) + '\n')	
-				
+		
 		#Display the generated phase diagram
-		#displayTernaryPD(phaseDf, totalPhases, realTemp)
+		displayTernaryPD(phaseDf, totalPhases, realTemp)
+
+	#Save the dataframe of each phase vs temp to a csv
+	columns = ["Temp"] + ["Phase {}".format(i+1) for i in range(totalPhases)]
+	pvtDf = pd.DataFrame(phaseVsTemp, columns=columns)
+	pvtSavePath = "areaVsTemp.csv"	
+	pvtDf.to_csv(pvtSavePath,index=False, header=True)
+	
+	#Display the area of each phase vs temp
+	pvtDf.plot(x=columns[0], y=columns[1:], kind='line')
+	plt.show()
+	plt.close()
 	
 #Generate a phase diagram dataframe 
 def generatePDDF(phaseModel, phaseDfParam, tempConst, denseInterval = 0.01):
@@ -460,7 +478,25 @@ def generatePDDF(phaseModel, phaseDfParam, tempConst, denseInterval = 0.01):
 	
 	print("Phase diagram generated. " + timeEndTime(startTime))
 	return phaseDf
+
+#Add a numpy array row detailing phase areas for a specific temp
+def addPhaseAreaRow(phaseVsTemp, phaseDf, totalPhases, realTemp):
+	#Convert phase dataframe into numpy array
+	npArr = phaseDf.to_numpy()
 	
+	#Calculate the area for each phase
+	phaseCol = npArr[:,-1:].flatten()
+	counter=[0 for i in range(totalPhases)]
+	for i in phaseCol:
+		counter[int(i)-1]=counter[int(i)-1]+1
+	areaRow = [c/npArr.shape[0] for c in counter]
+	
+	#Create the area row as: [Temp, P0A, P1A,...,PNA]
+	areaRow = np.array([realTemp]+areaRow)
+	
+	#Stack the row of phase areas
+	return np.vstack((phaseVsTemp, areaRow))
+
 #Display a phase diagram ternary contour and scatter plot 
 def displayTernaryPD(phaseDf, overallPhases, tempConst):
 	#Format the data
@@ -572,6 +608,7 @@ def displayTernaryPDContour(rawDataContour):
 #INITIAL SETTINGS
 ####################################################################################
 #Input and output data file paths
+inputFolderPath = os.path.join('..', 'PD_P1_SVM', 'Interpolated Data P1')
 inputFolderPath = os.path.join('..', 'PD_P1_KNN', 'Experimental Interpolated Results')
 outputFolderPath = r"Extrapolated Data P2"
 
@@ -581,10 +618,10 @@ headers = ['X', 'Y', 'Z', 'Temp', 'Phase']
 overallPhases = 4
 
 #Desired temperatures for output files
-outputTemperatures = [[295.15 + 1*i] for i in range(50)] 
+outputTemperatures = [[295.15 + 1*i] for i in range(51)] 
 
 custSettings = {'trainingMaxEpochs': 70000,
-				'trainingPatience' : 5000,
+				'trainingPatience' : 20000,
 				'trainingBatchSize': 1024}
 ####################################################################################
 
