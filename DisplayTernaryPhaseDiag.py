@@ -1,4 +1,4 @@
-
+from SVM.Resampling_SVM import ResampleSVM
 from plotly import graph_objs as go
 import pandas as pd
 import plotly
@@ -25,6 +25,44 @@ class Display:
 
         data_list = pd.read_csv(stringfileName).values.tolist()
         return (data_list[0][3], [p for p in list(map(lambda x : [x[0], x[1], x[2], x[4]], data_list))])
+
+
+    def display_All_T_Confidence(self):
+        """
+        FOR ConFIDENCE HEAT MAP
+        """
+        for s in ('300', '310', '323', '343'):
+            SVM = ResampleSVM(self.FormatDataFromCSV("PD_P1_SVM/Experimental Data P1/ER2_T" + s + ".csv"))
+            self.DisplayTernaryPhaseScatter(
+                self.FormatDataFromCSV("PD_P1_SVM/Experimental Data P1/ER2_T" + s + ".csv")[1], 10, s + " Lab Data")
+            optimal = pd.read_csv("T" + s + "-OUT.csv").values.tolist()[0][1:3]
+            print("Optimal Parameters used: ")
+            print(optimal)
+            self.DisplayTernaryPhaseScatter(SVM.generate_all_phase(SVM.data_in[1], optimal[0], optimal[1], .01), 7,
+                                               s + " SVM Optimized")
+            data_in = pd.read_csv("Confidence" + s + ".csv").values.tolist()
+
+            conf = list(map(lambda x: x[4], data_in))
+            fig = go.Figure(go.Scatterternary({
+                'mode': 'markers',
+                'a': list(map(lambda x: x[3], data_in)),
+                'b': list(map(lambda x: x[2], data_in)),
+                'c': list(map(lambda x: x[1], data_in)),
+                'text': conf,
+                'marker': {
+                    'symbol': 0,
+                    'color': conf,
+                    'size': 7,
+                    'colorbar': dict(title="Colorbar"),
+                    'colorscale': "Viridis"}
+            })
+            )
+
+            fig.update_layout(
+                title=go.layout.Title(
+                    text="Confidence T-" + s))
+            plotly.offline.plot(fig, filename="ConfidenceT" + s + ".html")
+            return
 
 
 
